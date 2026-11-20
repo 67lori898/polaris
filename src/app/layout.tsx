@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, IBM_Plex_Mono } from "next/font/google";
-
+import { Inter, IBM_Plex_Mono, Darker_Grotesque } from "next/font/google";
+import { ClerkProvider, Show, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import {dark} from "@clerk/themes"
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
@@ -26,19 +27,43 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider 
+       //proprieta(informazione che passi al componente) che permette di personalizzare i componenti clerk
+       appearance={{
+          theme: dark,
+      }}
+      >
+    
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${plexMono.variable} antialiased`}
+        className={`${inter.variable} ${plexMono    .variable} antialiased`}
       >
         <ThemeProvider
         attribute="class"
          defaultTheme="dark"
          enableSystem
          disableTransitionOnChange>
+           <header>
+           <Show when="signed-out">
+             <SignInButton mode="modal">
+              <button >Sign In</button>
+             </SignInButton>
+
+             <SignUpButton appearance mode="modal">
+                <button className="bg-rose-500  text-white p-2 rounded">Sign Up</button>
+              </SignUpButton>
+           </Show>
+
+           <Show when="signed-in">
+             <UserButton />
+           </Show>
+           </header>
+
              {children}
         </ThemeProvider>
      
       </body>
     </html>
+    </ClerkProvider>
   );
 }
